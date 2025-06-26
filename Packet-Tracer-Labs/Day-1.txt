@@ -1,0 +1,18 @@
+
+This lab simulates a secure network architecture connecting two branches — New York and Tokyo — via the internet. Each branch includes local end devices connected through switches and protected by Cisco ASA 5505 firewalls. The setup also includes an external attacker laptop connected to the internet segment to simulate potential security threats.
+
+Devices Used:
+
+3 × Cisco 2911 Routers (R1, R2, and Internet Router)
+2 × Cisco 2960 Switches (SW1, SW2)
+2 × Cisco ASA 5505 Firewalls (FW1, FW2)
+2 × PCs (New York)
+2 × Servers (Tokyo)
+1 × Laptop (Attacker)
+
+Learning Objectives:
+
+Configure inter-branch routing through a secure internet segment
+Understand firewall placement and traffic control
+Simulate and monitor potential external threats
+Practice using Packet Tracer's automatic connection tool for realistic cabling
