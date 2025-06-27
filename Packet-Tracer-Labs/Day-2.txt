@@ -1,0 +1,26 @@
+Lab 2 – Cabling Lab :
+
+In this lab, I designed and cabled a multi-layered network topology using Cisco Packet Tracer. The connections were made using appropriate cable types, considering Auto MDI-X was disabled. Fiber types were selected based on distance.
+
+Single-mode fiber was used for the long-distance link between Router R1 and R3 (3 km).
+Multimode fiber was used between Router R3 and R4 (250 meters).
+
+UTP Straight-through cables were used to connect:
+
+  Routers to switches
+  Switches to PCs/Server
+
+UTP Crossover cables were used between switches.
+All links were connected as per the given topology labels and tested for proper connectivity.
+
+
+        Devices Used:
+
+| Device Type | Device Name(s) |
+| ----------- | -------------- |
+| Routers     | R1, R2, R3, R4 |
+| Switches    | SW1 to SW8     |
+| PCs         | PC1, PC2, PC3  |
+| Server      | SRV1           |
+
+
