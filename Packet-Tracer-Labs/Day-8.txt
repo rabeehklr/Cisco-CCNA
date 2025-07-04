@@ -1,0 +1,200 @@
+The Day 8 lab involves configuring a Cisco router (R1) with multiple GigabitEthernet interfaces and assigning them IP addresses to connect to different switches (SW1, SW2, SW3). Here's a summary of the steps and commands shown in the file:
+
+1. Interface Configuration:
+
+   GigabitEthernet0/0 : The interface is configured with the IP address `15.255.255.254` and subnet mask `255.0.0.0` (connected to SW1).
+   GigabitEthernet0/1 : The interface is configured with the IP address `182.98.255.254` and subnet mask `255.255.0.0` (connected to SW2).
+   GigabitEthernet0/2 : The interface is configured with the IP address `201.191.20.254` and subnet mask `255.255.255.0` (connected to SW3).
+
+   These interfaces are brought up by issuing the `no shutdown` command after assigning the IPs and descriptions.
+
+2. Interface Status :
+
+   After configuring each interface, the status is checked using the `show ip interface brief` command, which shows that all interfaces (GigabitEthernet0/0, GigabitEthernet0/1, GigabitEthernet0/2) are up and functioning.
+
+3. Configuration Verification :
+
+   The `show running-config` command is used to verify the router's configuration. It lists all interfaces with their IP addresses, subnet masks, and descriptions, as well as other configurations like Spanning Tree Protocol (STP) and IP flow export.
+
+This lab demonstrates how to configure router interfaces, assign IP addresses, and verify the configuration. The focus is on ensuring the router can communicate with connected switches (SW1, SW2, SW3) through correctly configured interfaces.
+
+
+WORKSHEET :
+
+
+R1(config-if)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to up
+
+R1(config-if)#do show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0     15.255.255.254  YES manual up                    up 
+GigabitEthernet0/1     unassigned      YES unset  administratively down down 
+GigabitEthernet0/2     unassigned      YES unset  administratively down down 
+Vlan1                  unassigned      YES unset  administratively down down
+R1(config-if)#description ## to SW1 ##
+R1(config-if)#do show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0     15.255.255.254  YES manual up                    up 
+GigabitEthernet0/1     unassigned      YES unset  administratively down down 
+GigabitEthernet0/2     unassigned      YES unset  administratively down down 
+Vlan1                  unassigned      YES unset  administratively down down
+R1(config-if)#in g0/1
+R1(config-if)#ip address 182.98.255.254 255.255.0.0
+R1(config-if)#description ## to SW2 ##
+R1(config-if)#no shutdown
+
+R1(config-if)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+
+R1(config-if)#do show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0     15.255.255.254  YES manual up                    up 
+GigabitEthernet0/1     182.98.255.254  YES manual up                    up 
+GigabitEthernet0/2     unassigned      YES unset  administratively down down 
+Vlan1                  unassigned      YES unset  administratively down down
+R1(config-if)#in g0/2
+R1(config-if)#ip address 201.191.20.254 255.255.255.0
+R1(config-if)#no shut down
+
+R1(config-if)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/2, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/2, changed state to up
+
+R1(config-if)#description ## to SW3 ##
+R1(config-if)#do show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0     15.255.255.254  YES manual up                    up 
+GigabitEthernet0/1     182.98.255.254  YES manual up                    up 
+GigabitEthernet0/2     201.191.20.254  YES manual up                    up 
+Vlan1                  unassigned      YES unset  administratively down down
+R1(config-if)#end
+R1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+R1#show ip inter brief
+Interface              IP-Address      OK? Method Status                Protocol 
+GigabitEthernet0/0     15.255.255.254  YES manual up                    up 
+GigabitEthernet0/1     182.98.255.254  YES manual up                    up 
+GigabitEthernet0/2     201.191.20.254  YES manual up                    up 
+Vlan1                  unassigned      YES unset  administratively down down
+R1#show run
+Building configuration...
+
+Current configuration : 818 bytes
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R1
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+
+R1#show run
+Building configuration...
+
+Current configuration : 818 bytes
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R1
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+license udi pid CISCO2911/K9 sn FTX1524NMDP-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description ## to SW1 ##
+ ip address 15.255.255.254 255.0.0.0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ description ## to SW2 ##
+ ip address 182.98.255.254 255.255.0.0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ description ## to SW3 ##
+ ip address 201.191.20.254 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+!
+no cdp run
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
+
+R1#
+R1#
