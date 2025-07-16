@@ -1,0 +1,258 @@
+Lab 17 Description
+
+Inter-VLAN Routing and Trunk Configuration
+
+Objective:
+In this lab, you will configure two switches and one router to demonstrate VLAN creation, trunking between switches, and router-on-a-stick inter-VLAN routing.
+
+Tasks Performed:
+
+1. VLAN Configuration:
+
+   SW1:
+
+     * Create VLANs 10 and 30.
+     * Assign `FastEthernet0/1` and `FastEthernet0/2` to VLAN 10.
+     * Assign `FastEthernet0/3` and `FastEthernet0/4` to VLAN 30.
+   SW2:
+
+     * Create VLANs 10, 20, and 30.
+     * Assign `FastEthernet0/1` to VLAN 20.
+     * Assign `FastEthernet0/2` and `FastEthernet0/3` to VLAN 10.
+
+2. Trunk Links:
+
+   * Configure trunk links on `GigabitEthernet0/1` on both switches.
+   * Allow VLANs 10, 20, and 30 on the trunks.
+   * Set native VLAN to 1001 to resolve native VLAN mismatch warnings.
+
+3. Router-on-a-Stick:
+
+    On R1, enable `GigabitEthernet0/0` and configure three sub-interfaces:
+
+     * `Gig0/0.10` for VLAN 10 with IP `10.0.0.62/26`
+     * `Gig0/0.20` for VLAN 20 with IP `10.0.0.126/26`
+     * `Gig0/0.30` for VLAN 30 with IP `10.0.0.190/26`
+    Each sub-interface uses `802.1Q` encapsulation for its VLAN.
+
+4. Verification:
+
+   * Confirm trunk ports and allowed VLANs using `show interfaces trunk`.
+   * Verify VLANs are active and forwarding.
+
+Key Concepts Practiced:
+ VLAN creation and port assignment
+ Native VLAN configuration and mismatch handling
+ Trunking with allowed VLANs
+ Inter-VLAN routing using router sub-interfaces (`router-on-a-stick`)
+
+
+
+
+
+--------------------------------------------------------------------------------------------
+SW 1 :
+
+W1>
+SW1>
+SW1>
+SW1>en
+SW1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+SW1(config)#int range f0/2,f0/1
+SW1(config-if-range)#switchport mode access
+SW1(config-if-range)#switchport access vlan 10
+% Access VLAN does not exist. Creating vlan 10
+SW1(config-if-range)#int range f0/3,f0/4
+SW1(config-if-range)#switchport access vlan 30
+% Access VLAN does not exist. Creating vlan 30
+SW1(config-if-range)#int g0/1
+SW1(config-if)#swi mode tru
+
+SW1(config-if)#
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+
+SW1(config-if)#swi tru allowed vlan 10,30
+SW1(config-if)#sw
+SW1(config-if)#switchport na
+SW1(config-if)#switchport nat
+SW1(config-if)#switchport nati
+SW1(config-if)#switchport trunk native vlan 1001 
+SW1(config-if)#swi tru all
+SW1(config-if)#swi tru all
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet0/1 (1001), with SW2 GigabitEthernet0/1 (1).
+
+% Incomplete command.
+SW1(config-if)#swi tru all
+% Incomplete command.
+SW1(config-if)#switchport trunk native vlan 1001 
+SW1(config-if)#end
+SW1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+SW1#show int trunk
+Port        Mode         Encapsulation  Status        Native vlan
+Gig0/1      on           802.1q         trunking      1001
+
+Port        Vlans allowed on trunk
+Gig0/1      10,30
+
+Port        Vlans allowed and active in management domain
+Gig0/1      10,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Gig0/1      10,30
+
+
+---------------------------------------------------------------------------------------
+SW 2:  
+
+SW2>
+SW2>
+SW2>en
+SW2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+SW2(config)#int f0/1
+SW2(config-if)#swi mode acc
+SW2(config-if)#swi ac vlan 20
+% Access VLAN does not exist. Creating vlan 20
+SW2(config-if)#int range f0/2,f0/3
+SW2(config-if-range)#swi mode acc
+SW2(config-if-range)#swi ac vlan 10
+% Access VLAN does not exist. Creating vlan 10
+SW2(config-if-range)#
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/1, changed state to up
+
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet0/1 (1), with SW1 GigabitEthernet0/1 (1001).
+
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet0/1 (1), with SW1 GigabitEthernet0/1 (1001).
+
+SW2(config-if-range)#
+SW2(config-if-range)#
+SW2(config-if-range)#
+SW2(config-if-range)#int g0/1
+SW2(config-if)#
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on GigabitEthernet0/1 (1), with SW1 GigabitEthernet0/1 (1001).
+
+SW2(config-if)#swit mode trun
+SW2(config-if)#swit mode trun
+SW2(config-if)#swit tr
+SW2(config-if)#swit trunk all
+SW2(config-if)#swit trunk allowed vl
+SW2(config-if)#swit trunk allowed vlan 10,20,30
+SW2(config-if)#sw
+SW2(config-if)#switchport na
+SW2(config-if)#switchport tru
+SW2(config-if)#switchport trunk nat
+SW2(config-if)#switchport trunk native v
+SW2(config-if)#switchport trunk native vlan 1001
+SW2(config-if)#end
+SW2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+SW2#show int tru
+SW2#show int trunk 
+Port        Mode         Encapsulation  Status        Native vlan
+Gig0/1      on           802.1q         trunking      1001
+
+Port        Vlans allowed on trunk
+Gig0/1      10,20,30
+
+Port        Vlans allowed and active in management domain
+Gig0/1      10,20
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Gig0/1      10,20
+
+SW2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+SW2(config)#int g0/1
+SW2(config-if)#vlan 30
+SW2(config-vlan)#end
+SW2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+SW2#show int trunk 
+Port        Mode         Encapsulation  Status        Native vlan
+Gig0/1      on           802.1q         trunking      1001
+
+Port        Vlans allowed on trunk
+Gig0/1      10,20,30
+
+Port        Vlans allowed and active in management domain
+Gig0/1      10,20,30
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Gig0/1      10,20,30
+
+SW2#
+%LINK-5-CHANGED: Interface GigabitEthernet0/2, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/2, changed state to up
+
+SW2#
+SW2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+SW2(config)#int g0/2
+SW2(config-if)#sw
+SW2(config-if)#switchport mo
+SW2(config-if)#switchport mode trunk
+
+SW2(config-if)#switchport tr
+SW2(config-if)#switchport trunk all
+SW2(config-if)#switchport trunk allowed vl
+SW2(config-if)#switchport trunk allowed vlan 10,20,30
+SW2(config-if)#switchport trunk nat
+SW2(config-if)#switchport trunk native vl
+SW2(config-if)#switchport trunk native vlan 1001
+SW2(config-if)#
+
+-----------------------------------------------------------------------------------------------------
+R1 :
+
+R1>
+R1>
+R1>en
+R1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#int g0/0
+R1(config-if)#no shut down
+
+R1(config-if)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0, changed state to up
+
+R1(config-if)#int g0/0.10
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0.10, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0.10, changed state to up
+
+R1(config-subif)#enc
+R1(config-subif)#encapsulation dot
+R1(config-subif)#encapsulation dot1Q 10
+R1(config-subif)#ip add
+R1(config-subif)#ip address 10.0.0.62 255.255.255.192
+R1(config-subif)#int g0/0.20
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0.20, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0.20, changed state to up
+
+R1(config-subif)#encapsulation dot1Q 20
+R1(config-subif)#ip address 10.0.0.126 255.255.255.192
+R1(config-subif)#int g0/0.30
+R1(config-subif)#
+%LINK-5-CHANGED: Interface GigabitEthernet0/0.30, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface GigabitEthernet0/0.30, changed state to up
+
+R1(config-subif)#encapsulation dot1Q 30
+R1(config-subif)#ip address 10.0.0.190 255.255.255.192
+R1(config-subif)#
+R1(config-subif)#
